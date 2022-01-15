@@ -1,13 +1,15 @@
+
 import tkinter
 import pandas as pd
 import termcolor
 import random
+import enum
 
 guesses = pd.read_csv("src/guesses.txt", delimiter="\n")
 
-CORRECT_COLOR = "on_green"
-WRONG_COLOR = "on_grey"
-ALMOST_COLOR = "on_magenta"
+CORRECT_COLOR = "green"
+ABSENT_COLOR = "white"
+PRESENT_COLOR = "magenta"
 
 
 def simulate():
@@ -16,7 +18,7 @@ def simulate():
         guess = get_guess()
         if validate(guess):
             hint = check(guess=guess, answer=answer)
-            print(*hint)
+            render(hint)
             if guess == answer:
                 break
         else:
@@ -36,27 +38,86 @@ def get_guess() -> str:
 def validate(guess: str) -> bool:
     return guess in guesses["word"].values
 
+class State(enum.Enum):
+    CORRECT = 2
+    PRESENT = 1
+    ABSENT = 0
+
+
+class Letter:
+    def __init__(self, letter: str) -> None:
+        self.rune = letter
+        self.state = State.ABSENT
+        self.accounted_for = False
+    
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, Letter):
+            return __o.rune == self.rune
+        elif isinstance(__o, str):
+            return __o == self.rune
+        else:
+            return False
+
+    def mark_correct(self):
+        self.state = State.CORRECT
+        self.accounted_for = True
+
+    def mark_present(self):
+        self.state = State.PRESENT
+        self.accounted_for = True
+
+
+
+class Word(list[Letter]):
+    def __init__(self, word: str) -> None:
+        letters: list[Letter] = [Letter(letter) for letter in word]
+        super(Word, self).__init__()
+        self.extend(letters)
+    
+    def contains(self, check: Letter) -> bool:
+        for letter in self:
+            if not letter.accounted_for:
+                if check == letter:
+                    letter.accounted_for = True
+                    return True
+
+
 
 def check(guess: str, answer: str) -> list[tkinter.Text]:
-    remaining_answer = list(answer)
-    remaining_guess = list(guess)
-    hint = [WRONG_COLOR for _ in range(5)]
+    w_answer = Word(answer)
+    hint = Word(guess)
     for i in range(5):
-        if guess[i] == answer[i]:
-            hint[i] = CORRECT_COLOR
-            remaining_answer[i] = None
-            remaining_guess[i] = None
+        if hint[i] == answer[i]:
+            hint[i].mark_correct()
+            w_answer[i].accounted_for = True
     for i in range(5):
-        if remaining_guess[i]:
-            if remaining_guess[i] in remaining_answer:
-                hint[i] = ALMOST_COLOR
-                remaining_guess[i] = None
-                for j, letter in enumerate(remaining_answer):
-                    if letter == remaining_guess[i]:
-                        remaining_answer[i] = None
-    return [
-        termcolor.colored(text=guess[i], on_color=hint[i]) 
-        for i in range(5)]
+        if not hint[i].accounted_for:
+            if w_answer.contains(hint[i]):
+                hint[i].mark_present()
+    return hint
+
+
+def render(hint: Word):
+    highlights = {
+        State.CORRECT: "on_green",
+        State.PRESENT: "on_yellow",
+        State.ABSENT: "on_grey"
+    }
+    text_colors = {
+        State.CORRECT: "grey",
+        State.PRESENT: "grey",
+        State.ABSENT: "white"
+    }
+    output = []
+    for letter in hint:
+        output.append(
+            termcolor.colored(
+                text=letter.rune,
+                color=text_colors[letter.state],
+                on_color=highlights[letter.state]
+            )
+        )
+    print(*output)    
 
 
 if __name__ == "__main__":
