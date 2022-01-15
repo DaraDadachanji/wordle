@@ -68,8 +68,4 @@ def get_hint():
 
 
 if __name__ == "__main__":
-    #assist_guesses()
-    answer = "panic"
-    hint = create_hint(word="caulk", pattern="pcaaa")
-    result = check(answer=answer, hint=hint)
-    print(result)
+    assist_guesses()
