@@ -7,11 +7,6 @@ import enum
 
 guesses = pd.read_csv("src/guesses.txt", delimiter="\n")
 
-CORRECT_COLOR = "green"
-ABSENT_COLOR = "white"
-PRESENT_COLOR = "magenta"
-
-
 def simulate():
     answer = get_random_answer()
     while True:
