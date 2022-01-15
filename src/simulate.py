@@ -2,15 +2,15 @@
 import pandas as pd
 import termcolor
 import random
-import wordle
+import game
 
 
 def simulate():
     answer = get_random_answer()
     while True:
         guess = get_guess()
-        if wordle.validate(guess):
-            hint = wordle.check(guess=guess, answer=answer)
+        if game.validate(guess):
+            hint = game.check(guess=guess, answer=answer)
             render(hint)
             if guess == answer:
                 break
@@ -28,16 +28,16 @@ def get_guess() -> str:
     return guess
 
 
-def render(hint: wordle.Word):
+def render(hint: game.Word):
     highlights = {
-        wordle.State.CORRECT: "on_green",
-        wordle.State.PRESENT: "on_yellow",
-        wordle.State.ABSENT: "on_grey"
+        game.State.CORRECT: "on_green",
+        game.State.PRESENT: "on_yellow",
+        game.State.ABSENT: "on_grey"
     }
     text_colors = {
-        wordle.State.CORRECT: "grey",
-        wordle.State.PRESENT: "grey",
-        wordle.State.ABSENT: "white"
+        game.State.CORRECT: "grey",
+        game.State.PRESENT: "grey",
+        game.State.ABSENT: "white"
     }
     output = []
     for letter in hint:
