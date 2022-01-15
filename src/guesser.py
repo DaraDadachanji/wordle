@@ -48,6 +48,7 @@ def check(answer: str, hint: game.Word) -> bool:
             if hint[i].state != game.State.CORRECT:
                 return False
             w_answer[i].accounted_for = True
+            hint[i].accounted_for = True
     for i in range(5):
         if not hint[i].accounted_for:
             if w_answer.contains(hint[i].rune):
@@ -67,4 +68,8 @@ def get_hint():
 
 
 if __name__ == "__main__":
-    assist_guesses()
+    #assist_guesses()
+    answer = "panic"
+    hint = create_hint(word="caulk", pattern="pcaaa")
+    result = check(answer=answer, hint=hint)
+    print(result)
