@@ -15,7 +15,7 @@ class Guesser:
     def __init__(self) -> None:
         self.hints: list[game.Word] = []
         #self.guesses = pd.read_csv("src/guesses.txt", delimiter="\n")
-        self.answers = pd.read_csv("src/guesses.txt", delimiter="\n")
+        self.answers = pd.read_csv("src/answers.txt", delimiter="\n")
 
     def give_hint(self, hint: game.Word):
         self.hints.append(hint)
