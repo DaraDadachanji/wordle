@@ -12,7 +12,6 @@ ALMOST_COLOR = "on_magenta"
 
 def simulate():
     answer = get_random_answer()
-    print(answer)
     while True:
         guess = get_guess()
         if validate(guess):
