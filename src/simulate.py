@@ -17,6 +17,7 @@ def simulate():
         else:
             print("invalid guess")
 
+
 def get_random_answer() -> str:
     answers = pd.read_csv("src/answers.txt", delimiter="\n")
     id = random.randrange(len(answers.index))
