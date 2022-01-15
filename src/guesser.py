@@ -1,6 +1,7 @@
 from tkinter import W
 import pandas as pd
 import numpy as np
+import copy
 import game
 
 def assist_guesses():
@@ -42,20 +43,21 @@ def create_hint(word: str, pattern: str):
 
 
 def check(answer: str, hint: game.Word) -> bool:
+    _hint = copy.deepcopy(hint)
     w_answer = game.Word(answer)
     for i in range(5):
-        if hint[i].rune == answer[i]:
-            if hint[i].state != game.State.CORRECT:
+        if _hint[i].rune == answer[i]:
+            if _hint[i].state != game.State.CORRECT:
                 return False
             w_answer[i].accounted_for = True
-            hint[i].accounted_for = True
+            _hint[i].accounted_for = True
     for i in range(5):
-        if not hint[i].accounted_for:
-            if w_answer.contains(hint[i].rune):
-                if hint[i].state != game.State.PRESENT:
+        if not _hint[i].accounted_for:
+            if w_answer.contains(_hint[i].rune):
+                if _hint[i].state != game.State.PRESENT:
                     return False
             else:
-                if hint[i].state != game.State.ABSENT:
+                if _hint[i].state != game.State.ABSENT:
                     return False
     return True
 
