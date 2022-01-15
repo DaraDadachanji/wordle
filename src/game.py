@@ -47,6 +47,7 @@ class Word(list[Letter]):
                 if check == letter:
                     letter.accounted_for = True
                     return True
+        return False
 
 
 def check(guess: str, answer: str) -> Word:
